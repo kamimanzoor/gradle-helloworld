@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '0.0.4-SNAPSHOT'
+version = '0.0.5-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
@@ -32,11 +32,6 @@ release {
         net.researchgate.release.GitAdapter
     ]
 
-    updateVersion.doLast { 
-    	def buildGradle = file('build.gradle')
-	buildGradle.text = buildGradle.text.replaceFirst(~/version = (\d++\.\d++\.\d++(-SNAPSHOT)?)/, 'version = \'$1\'') 
-    }
-
     git {
         requireBranch = 'main'
         pushToRemote = 'origin'
@@ -44,4 +39,9 @@ release {
         commitVersionFileOnly = false
         signTag = false
     }
+}
+
+updateVersion.doLast { 
+	def buildGradle = file('build.gradle')
+	buildGradle.text = buildGradle.text.replaceFirst(~/version = (\d++\.\d++\.\d++)/, 'version = \'$1\'') 
 }
