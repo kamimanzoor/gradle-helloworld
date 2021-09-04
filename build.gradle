@@ -43,5 +43,5 @@ release {
 
 updateVersion.doLast { 
 	def buildGradle = file('build.gradle')
-	buildGradle.text = buildGradle.text.replaceFirst(~/version = (\d++\.\d++\.\d++)/, 'version = \'$1\'') 
+	buildGradle.text = buildGradle.text.replaceFirst(~/version = (\d++\.\d++\.\d++(SNAPSHOT)?/, 'version = \'$1\'') 
 }
