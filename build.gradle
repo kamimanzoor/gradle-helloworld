@@ -33,7 +33,7 @@ release {
     ]
 
     git {
-        requireBranch = 'test-semver'
+        requireBranch = 'main'
         pushToRemote = 'origin'
         pushToBranchPrefix = ''
         commitVersionFileOnly = false
