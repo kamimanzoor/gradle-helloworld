@@ -1,0 +1,24 @@
+{
+  "configuration": {
+    "name": "Default",
+    "appenders": {
+      "File": {
+        "name": "file-appender",
+        "fileName": "${sys:LOG_FILE}",
+        "JsonLayout": {
+          "compact": "true",
+          "eventEol": "true",
+          "properties": "true"
+        }
+      }
+    },
+    "loggers": {
+      "root": {
+        "level":"info",
+        "appender-ref": {
+          "ref":"file-appender"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,12 @@
+deploy:
+  env: "local"
+
+# don't forget to build you image inside Minikube's docker
+# eval $(docker-machine env -u)
+# docker build -t your-super-image .  
+image:
+  imagePullPolicy: "Never"
+
+config:
+  ingress:
+    enabled: false

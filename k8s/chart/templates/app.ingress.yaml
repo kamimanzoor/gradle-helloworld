@@ -1,0 +1,27 @@
+{{- if .Values.config.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: "{{ .Values.deploy.name }}"
+  labels:
+    website: "{{ .Values.deploy.name }}"
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    {{- toYaml .Values.annotations | nindent 4 }}
+spec:
+  rules:
+    - host: "{{ .Values.deploy.name }}.{{ .Values.deploy.env }}.maersk-digital.net"
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: "{{ .Values.deploy.name }}"
+                port:
+                  number: 8080
+  tls:
+    - hosts:
+      - {{ .Values.deploy.name }}.{{ .Values.deploy.env }}.maersk-digital.net
+      secretName: tls-wildcard-maersk-digital-net
+{{- end }}

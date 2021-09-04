@@ -1,0 +1,41 @@
+spring.banner: banner.txt
+spring.application.name: Spring Boot Template
+
+#Add contents accordingly
+management:
+  server:
+    port: ${MGMT_PORT:9090}
+  endpoint:
+    beans:
+      cache:
+        time-to-live: "10s"
+    restart:
+      enabled: true
+    health:
+      enabled: true
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+
+spring:
+  flyway:
+    enabled: true
+
+  h2:
+    console:
+      enabled: ${H2_ENABLED:false}
+      path: /console
+      settings:
+        web-allow-others: true
+
+server.port: ${PORT:8080}
+logging:
+  level:
+    org.springframework.cloud: ${LOG_LEVEL:debug}

@@ -1,0 +1,39 @@
+deploy:
+  env: "local"
+  name: "alcl-java-spring-boot-template"
+  github:
+    repository: "alcl-java-spring-boot-template"
+    workflowId: ""
+  
+image:
+  imagePullPolicy: "Always"
+  version: "21.0809_47" 
+
+resources:
+  requests:
+    cpu: "500m"
+    memory: "256M"
+  limits:
+    cpu: "1000m"
+    memory: "512M"
+
+config:
+  # TBD: pod autoscaler
+  replicas: 1
+  ingress:
+    enabled: true
+  port: 8080
+  healthPort: 9090
+  envs:
+    - name: H2_ENABLED
+      value: "false"
+    - name: LOG_LEVEL
+      value: "debug"
+    - name: JAVA_OPTS
+      value: "-Xms512m -Xmx1048m"
+
+# All resources will be annotated with these KVs
+annotations:
+  team: "Air & LCL"
+  github-repo: "https://github.com/Maersk-Global/alcl-java-spring-boot-template"
+  product: "alice"

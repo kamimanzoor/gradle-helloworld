@@ -1,0 +1,7 @@
+apiVersion: v1
+name: alcl-java-spring-boot-template
+version: "4.0"
+description: api for springboot application
+maintainers: 
+  - name: dve089
+    email: daniel.velasquez@maersk.com

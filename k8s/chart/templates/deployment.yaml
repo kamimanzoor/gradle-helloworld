@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.deploy.name }}
+  annotations:
+    {{- toYaml .Values.annotations | nindent 4 }}
+  labels:
+    product: "Alice"
+    tags.datadoghq.com/env: "{{ .Values.deploy.stage }}"
+    tags.datadoghq.com/service: "{{ .Values.deploy.name }}"
+    tags.datadoghq.com/version: "{{ .Values.deploy.version }}"
+    github.repository: "{{ .Values.deploy.github.repository }}"
+    github.workflowId: "{{ .Values.deploy.github.workflowId }}"
+spec:
+  replicas: {{ .Values.config.replicas }}
+  revisionHistoryLimit: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: {{ .Values.deploy.name }}
+  template:
+    metadata:
+      annotations:
+        {{- toYaml .Values.annotations | nindent 8 }}
+      labels:
+        product: "Alice"
+        app: {{ .Values.deploy.name }}
+        tags.datadoghq.com/env: "{{ .Values.deploy.stage }}"
+        tags.datadoghq.com/service: "{{ .Values.deploy.name }}"
+        tags.datadoghq.com/version: "{{ .Values.deploy.version }}"
+        github.repository: "{{ .Values.deploy.github.repository }}"
+        github.workflowId: "{{ .Values.deploy.github.workflowId }}"
+    spec:
+      containers:
+        - image:  "maerskao.azurecr.io/alcl/alcl-java-spring-boot-template:{{ .Values.image.version }}"
+          imagePullPolicy: {{ .Values.image.imagePullPolicy }}
+          name: {{ .Values.deploy.name }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          env:
+            {{- range .Values.config.envs }}
+            - name: {{ .name }}
+              value: {{ .value | quote }}
+            {{- end }}
+            - name: DD_AGENT_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: DD_ENV
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/env']
+            - name: DD_SERVICE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/service']
+            - name: DD_VERSION
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.labels['tags.datadoghq.com/version']
+          ports:
+          - name: http
+            containerPort: {{ .Values.config.port }}
+          - name: health
+            containerPort: {{ .Values.config.healthPort }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.config.healthPort }}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.config.healthPort }}
+            initialDelaySeconds: 60
+            periodSeconds: 20
+      restartPolicy: Always
