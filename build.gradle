@@ -12,13 +12,6 @@ sourceCompatibility = '11'
 repositories {
     mavenCentral()
     // Add this section to add github maven packaged from this repo
-    maven {
-        url = uri("https://maven.pkg.github.com/Maersk-Global/alcl-java-package-template")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-            password = project.findProperty("gpr.key") ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
 }
 
 dependencies {
