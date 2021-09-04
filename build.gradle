@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '0.0.2-SNAPSHOT'
+version = '0.0.3-SNAPSHOT'
 sourceCompatibility = '11'
 
 repositories {
@@ -28,9 +28,15 @@ test {
 }
 
 release {
+    versionPropertyFile = 'build.gradle'
     scmAdapters = [
         net.researchgate.release.GitAdapter
     ]
+
+    updateVersion.doLast { 
+    	def buildGradle = file('build.gradle')
+	buildGradle.text = buildGradle.text.replaceFirst(~/version = (\d++\.\d++\.\d++)/, 'version = \'$1\'') 
+    }
 
     git {
         requireBranch = 'main'
