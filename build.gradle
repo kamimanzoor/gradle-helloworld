@@ -6,7 +6,7 @@ plugins {
 }
 
 group = 'com.example'
-version = '1.4-SNAPSHOT'
+version = 1.4
 sourceCompatibility = '11'
 
 repositories {
@@ -29,7 +29,7 @@ test {
 
 release {
 	versionPropertyFile = 'build.gradle'
-    pushReleaseVersionBranch = 'release'
+    pushReleaseVersionBranch = 'release/1.4'
 	scmAdapters = [
         net.researchgate.release.GitAdapter
     ]
