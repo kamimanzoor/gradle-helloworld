@@ -29,7 +29,7 @@ test {
 
 release {
 	versionPropertyFile = 'build.gradle'
-    pushReleaseVersionBranch = 'release/$version'
+    pushReleaseVersionBranch = 'release'
 	scmAdapters = [
         net.researchgate.release.GitAdapter
     ]
