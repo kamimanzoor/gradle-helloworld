@@ -27,6 +27,14 @@ test {
     useJUnitPlatform()
 }
 
+task finalize {
+    doLast {
+       println('finally!')
+    }
+}
+
+build.finalizedBy(finalize)
+
 release {
 	versionPropertyFile = 'build.gradle'
 	scmAdapters = [
