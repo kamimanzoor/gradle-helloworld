@@ -34,7 +34,7 @@ release {
     ]
 
     git {
-        requireBranch = 'main'
+        requireBranch = '/hotfix|main/'
         pushToRemote = 'origin'
         pushToBranchPrefix = ''
         commitVersionFileOnly = false
