@@ -29,7 +29,8 @@ test {
 
 task finalize {
     doLast {
-       println('finally!')
+       println ('hello')
+       println project.version
     }
 }
 
