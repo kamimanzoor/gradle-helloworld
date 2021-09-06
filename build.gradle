@@ -29,6 +29,7 @@ test {
 
 task finalize {
     doLast {
+	   
        println ('hello')
        println project.version
     }
@@ -38,6 +39,8 @@ build.finalizedBy(finalize)
 
 release {
 	versionPropertyFile = 'build.gradle'
+	failOnUnversionedFiles = false
+	failOnCommitNeeded = false
 	scmAdapters = [
         net.researchgate.release.GitAdapter
     ]

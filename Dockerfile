@@ -6,9 +6,10 @@ ARG GITHUB_TOKEN
 WORKDIR /app
 COPY build.gradle settings.gradle /app/
 
-RUN gradle clean build --no-daemon > /dev/null 2>&1 || true
+#RUN gradle clean build --no-daemon > /dev/null 2>&1 || true
 COPY ./ /app/
-RUN gradle build -x test --no-daemon
+COPY .git/ /app/.git/
+RUN gradle release -x test --no-daemon
 
 FROM maerskao.azurecr.io/alcl/openjdk-11:a07f67b6891a5a00721dcba6f90da71fac2021b0
 
