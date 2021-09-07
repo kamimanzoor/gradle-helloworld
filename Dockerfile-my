@@ -1,0 +1,12 @@
+FROM maerskao.azurecr.io/alcl/gradle-7-jdk-11:1d53c5698fdee9210b67edfce98ba0686b96754a as builder
+
+ARG GITHUB_ACTOR
+ARG GITHUB_TOKEN
+
+WORKDIR /app
+COPY build.gradle settings.gradle /app/
+
+#RUN gradle clean build --no-daemon > /dev/null 2>&1 || true
+COPY ./ /app/
+#COPY .git/ /app/.git/
+
