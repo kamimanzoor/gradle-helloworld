@@ -1,0 +1,28 @@
+# This is a basic workflow to help you get started with Actions
+
+name: java-CD
+
+on:
+  workflow_run:
+    workflows: ["java-CI"]
+    branches-ignore: [main]
+    types:
+      - completed
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy'
+        required: true
+  release:
+    types: [published]
+
+jobs:
+
+  set-clusters:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Object
+        run: |
+          cat << OBJECT
+          ${{ toJson(github) }}
+          OBJECT
