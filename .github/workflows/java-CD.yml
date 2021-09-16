@@ -34,4 +34,7 @@ jobs:
           workflow_conclusion: success
 
       - name: List
-        run: ls -la
+        run: |
+          ls -la
+          ls -la my-artifact
+          cat my-artifact/world.txt
