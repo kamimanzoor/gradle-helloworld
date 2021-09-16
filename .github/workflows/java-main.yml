@@ -25,6 +25,10 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - name: test merge
+        run: |
+          cat .github/workflows/java-CD.yml
+
       # Runs a single command using the runners shell
       - name: Run a one-line script
         run: echo Hello, world!
