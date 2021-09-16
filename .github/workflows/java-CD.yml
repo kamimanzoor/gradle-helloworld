@@ -23,14 +23,12 @@ jobs:
     steps:
       - name: Object
         run: |
-          cat << OBJECT
-          ${{ toJson(github) }}
-          OBJECT
+          echo ${{ toJson(github) }}
      - name: Download artifact
        uses: dawidd6/action-download-artifact@v2
        with: 
          workflow: ${{ github.event.workflow_run.workflow_id }}
          workflow_conclusion: success
-     
+
      - name: List
        run: ls -la
