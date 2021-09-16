@@ -43,9 +43,9 @@ jobs:
         id: create-metadata-artifact
         run: |
           BUILD_METADATA=$(cat << EOF
-          "{\"version\": \"2\",
-          \"buildDate\": \"$(date +'%Y-%m-%dT%H:%M:%S')\",
-          \"image\": \"abc:456\"}"
+          {"version": "2",
+          "buildDate": "$(date +'%Y-%m-%dT%H:%M:%S')",
+          "image": "abc:456"}
           EOF
           )
           echo "$BUILD_METADATA" >> build-metadata.json
