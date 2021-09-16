@@ -22,8 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Object
-        run: |
-          echo ${{ toJson(github) }}
+        run: echo ${{ toJson(github) }}
      - name: Download artifact
        uses: dawidd6/action-download-artifact@v2
        with: 
