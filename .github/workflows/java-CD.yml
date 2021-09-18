@@ -1,7 +1,4 @@
-# This is a basic workflow to help you get started with Actions
-
 name: java-CD
-
 on:
   workflow_run:
     workflows: ["java-CI"]
@@ -13,6 +10,9 @@ on:
       version:
         description: 'Version to deploy'
         required: true
+      envs:
+        description: 'Environments to deploy. Use comman separated string for more than 1 value. Options: dev, prod'
+        required: true
   release:
     types: [published]
 
@@ -20,21 +20,73 @@ jobs:
 
   set-clusters:
     runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
-      - name: Object
-        run: |
-          cat << OBJECT
-          ${{ toJson(github) }}
-          OBJECT
-
-      - name: Download artifact
+      - name: Download CI workflow artifact
+        if: ${{ github.event_name == 'workflow_run' }}
+        id: download-artifact
         uses: dawidd6/action-download-artifact@v2
         with:
           workflow: ${{ github.event.workflow_run.workflow_id }}
           workflow_conclusion: success
-
-      - name: List
+      - name: Set Env Vars
+        id: set-env-vars
         run: |
-          ls -la
-          ls -la my-artifact
-          cat my-artifact/world.txt
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "VERSION=${{ github.event.release.tag_name }}"
+            echo "VERSION=${{ github.event.release.tag_name }}" >> "$GITHUB_ENV"
+            echo "GIT_REF=refs/tags/${{ github.event.release.tag_name }}" >> "$GITHUB_ENV"
+            echo "ENVS_TO_DEPLOY=dev, prod" >> "$GITHUB_ENV"
+          
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "VERSION=${{ github.event.inputs.version }}"
+            echo "VERSION=${{ github.event.inputs.version }}" >> "$GITHUB_ENV"
+            echo "GIT_REF=refs/tags/${{ github.event.inputs.version }}" >> "$GITHUB_ENV"
+            echo "ENVS_TO_DEPLOY=${{ github.event.inputs.envs }}" >> "$GITHUB_ENV"
+          
+          elif [[ "${{ github.event_name }}" == "workflow_run" ]]; then
+            version=$(cat artifact/build-properties.json  | jq -r '.version')
+            echo "VERSION=$version"
+            echo "VERSION=$version" >> "$GITHUB_ENV"
+            echo "GIT_REF=${{ github.event.workflow_run.head_sha }}" >> "$GITHUB_ENV"
+            echo "ENVS_TO_DEPLOY=dev" >> "$GITHUB_ENV"
+          fi
+      - id: set-matrix
+        run: |
+          declare -A env_conf=(
+            ['dev']="{\"cluster\":\"core-dev-west-1\",\"env\":\"dev\",\"namespace\":\"alice-dev\",\"version\":\"${{ env.VERSION }}\",\"git_ref\":\"${{ env.GIT_REF }}\"}"
+            ['prod']="{\"cluster\":\"core-dev-west-1\",\"env\":\"prod\",\"namespace\":\"alice-staging\",\"version\":\"${{ env.VERSION }}\",\"git_ref\":\"${{ env.GIT_REF }}\"}"
+          )
+          deploy_jobs=$(for i in $(echo "${{ env.ENVS_TO_DEPLOY }}" | sed "s/,/ /g"); do echo "${env_conf[$i]},"; done)
+          echo $deploy_jobs
+          deploy_jobs="${deploy_jobs/%,/}"
+          echo $deploy_jobs
+          matrix=$((
+            echo "{ \"include\" : "
+            echo "[${deploy_jobs}]"
+            echo "}"
+          ) | jq -c .)
+          echo $matrix
+          echo $matrix | jq .
+          echo "::set-output name=matrix::$matrix"        
+
+  release:
+    needs: 
+      - set-clusters
+    timeout-minutes: 10
+    name: deploy
+    runs-on: ubuntu-latest
+    strategy:
+      matrix: ${{fromJson(needs.set-clusters.outputs.matrix)}}
+    steps:
+      - name: Checkout
+        run: |
+          echo "refs/tags/${{ matrix.version }}"
+          echo "${{ matrix.cluster }}"
+          echo "${{ matrix.namespace }}"
+
+      - name: Deploy to env ${{ matrix.env }}
+        run: |
+          echo "${{ matrix.namespace }}"
+          echo "${{ matrix.env }}"

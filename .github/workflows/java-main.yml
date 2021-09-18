@@ -34,10 +34,19 @@ jobs:
         run: |
           echo Add other actions to build,
           echo test, and deploy your project.
-      
-      - run: echo hello "$GITHUB_RUN_ID" > world.txt
+
+      - name: Create Artifact
+        id: create-metadata-artifact
+        run: |
+          BUILD_METADATA=$(cat << EOF
+          {"version": "2",
+          "buildDate": "$(date +'%Y-%m-%dT%H:%M:%S')",
+          "image": "abc:456"}
+          EOF
+          )
+          echo "$BUILD_METADATA" >> build-properties.json
 
       - uses: actions/upload-artifact@v2
         with:
-          name: my-artifact
-          path: world.txt  
+          name: artifact
+          path: build-properties.json
