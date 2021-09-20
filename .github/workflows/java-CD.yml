@@ -11,7 +11,7 @@ on:
         description: 'Version to deploy'
         required: true
       envs:
-        description: 'Environments to deploy. Use comman separated string for more than 1 value. Options: dev, prod'
+        description: 'Environments to deploy. Use comma separated string for more than 1 value. Options: dev, prod'
         required: true
   release:
     types: [published]
